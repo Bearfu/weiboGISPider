@@ -8,7 +8,7 @@ Start_time = "2012-07-21-2"  # 起始时间
 End_time = "2012-07-22-23"  # 结束时间
 page = 2
 
-
+# 将传入的关键字进行两次Encode
 def doubleEncode(key):
     try:
         return urllib.parse.quote(urllib.parse.quote(key))
@@ -27,6 +27,7 @@ if __name__ == '__main__':
     url = "https://s.weibo.com/weibo/{}?q={}&&region=custom:11:{}&typeall=1&suball=1&timescope=custom:{}:{}&Refer=g&page={}".format(
         doubleEncode(SelectCode), SelectCode, Regionnum, Start_time, End_time,page
     )
+    print(url)
     headers = {
         'Connection': "keep-alive",
         'Upgrade-Insecure-Requests': "1",
