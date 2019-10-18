@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import re
 import datetime
 import pymsqlDemo
+import random
 
 SelectCode = "北京大雨"  # 关键字
 
@@ -132,51 +133,51 @@ if __name__ == '__main__':
                     print("总页数 = ", len(li))
                 except:
                     print("总页数 = 1")
-            #     # 获取用户微博列表
-            #     con_L = soup.find_all("div", "card-wrap")
-            #     # 轮询列表中的微博
-            #     for a in con_L:
-            #         # 从a标签中获取用户的ID
-            #         userInfo = a.find('a')
-            #         if userInfo:
-            #             result = re.findall(".*m/(.*)\?.*", userInfo.get('href'))
-            #             if result:
-            #                 # print("UserId = ", result[0])
-            #                 infoObj["msg_id"] = result[0]
-            #             # 从class为txt 的P标签中获取用户发布的微博内容
-            #             txt = a.find('p', 'txt')
-            #             if txt:
-            #                 # print("Content = ", txt.get_text().replace(" ", "").replace("\n", ""))
-            #                 infoObj["content"] = txt.get_text().replace(" ", "").replace("\n", "")
-            #             # 从class为from 的P标签中获取用户发布的时间和来源
-            #             fm = a.find('p', 'from')
-            #             if fm:
-            #                 fms = fm.get_text().replace(" ", "").split("\xa0")
-            #                 if len(fms) > 1:
-            #                     # print("time = ", fms[0].replace(" ", "").replace("\n", ""))
-            #                     # print("source = ", fms[1].replace(" ", "").replace("\n", ""))
-            #                     infoObj["msg_time"] = fms[0].replace(" ", "").replace("\n", "")
-            #                     # infoObj["msg_timestamp"] = txt.get_text().replace(" ", "").replace("\n", "")
-            #                     infoObj["tools"] = fms[0].replace(" ", "").replace("\n", "")
-            #
-            #             # 从class为card-act 的 div 标签中获取点赞等相关信息
-            #             card_act = a.find('div', 'card-act')
-            #             if card_act:
-            #                 ul = card_act.find('ul')
-            #                 lis = ul.find_all('li')
-            #                 # infoObj["transmi_count"] = lis[0].get_text().replace("转发")
-            #                 # infoObj["comment_count"] = lis[1].get_text()
-            #                 # infoObj["praise_count"] = lis[2].get_text()
-            #                 # print("收藏 = ", lis[0].get_text())
-            #                 # print("转发 = ", lis[1].get_text())
-            #                 # print("评论 = ", lis[2].get_text())
-            #                 # print("点赞 = ", lis[3].get_text())
-            #             if infoObj.get('msg_id') != "":
-            #                 # print(infoObj)
-            #                 pymsqlDemo.insertDB(infoObj)
-            #
-            #
-            # else:
-            #     print("抱歉，未找到“北京大雨”相关结果")
-            # time.sleep(1)
+                # 获取用户微博列表
+                con_L = soup.find_all("div", "card-wrap")
+                # 轮询列表中的微博
+                for a in con_L:
+                    # 从a标签中获取用户的ID
+                    userInfo = a.find('a')
+                    if userInfo:
+                        result = re.findall(".*m/(.*)\?.*", userInfo.get('href'))
+                        if result:
+                            # print("UserId = ", result[0])
+                            infoObj["msg_id"] = result[0]
+                        # 从class为txt 的P标签中获取用户发布的微博内容
+                        txt = a.find('p', 'txt')
+                        if txt:
+                            # print("Content = ", txt.get_text().replace(" ", "").replace("\n", ""))
+                            infoObj["content"] = txt.get_text().replace(" ", "").replace("\n", "")
+                        # 从class为from 的P标签中获取用户发布的时间和来源
+                        fm = a.find('p', 'from')
+                        if fm:
+                            fms = fm.get_text().replace(" ", "").split("\xa0")
+                            if len(fms) > 1:
+                                # print("time = ", fms[0].replace(" ", "").replace("\n", ""))
+                                # print("source = ", fms[1].replace(" ", "").replace("\n", ""))
+                                infoObj["msg_time"] = fms[0].replace(" ", "").replace("\n", "")
+                                # infoObj["msg_timestamp"] = txt.get_text().replace(" ", "").replace("\n", "")
+                                infoObj["tools"] = fms[0].replace(" ", "").replace("\n", "")
+
+                        # 从class为card-act 的 div 标签中获取点赞等相关信息
+                        card_act = a.find('div', 'card-act')
+                        if card_act:
+                            ul = card_act.find('ul')
+                            lis = ul.find_all('li')
+                            # infoObj["transmi_count"] = lis[0].get_text().replace("转发")
+                            # infoObj["comment_count"] = lis[1].get_text()
+                            # infoObj["praise_count"] = lis[2].get_text()
+                            # print("收藏 = ", lis[0].get_text())
+                            # print("转发 = ", lis[1].get_text())
+                            # print("评论 = ", lis[2].get_text())
+                            # print("点赞 = ", lis[3].get_text())
+                        if infoObj.get('msg_id') != "":
+                            # print(infoObj)
+                            pymsqlDemo.insertDB(infoObj)
+
+
+            else:
+                print("抱歉，未找到“北京大雨”相关结果")
+            time.sleep(random.randint(5, 10))
             Start_time = get_next_time(Start_time)
