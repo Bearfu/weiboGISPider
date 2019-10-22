@@ -8,8 +8,9 @@ def insertDB(kwargs):
     # 使用cursor()方法获取操作游标
     cursor = db.cursor()
     # SQL 插入语句
-    sql = """INSERT INTO weiboGis(msg_id,address,content,msg_time,msg_timestamp,tools,transmi_count,comment_count,praise_count,created_at,updated_at)
-             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW(),NOW())"""
+    sql = """INSERT INTO weiboGis(msg_id,address,content,msg_time,msg_timestamp,tools,transmi_count,comment_count,
+                    praise_count,lng,lat,created_at,updated_at)
+             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW(),NOW())"""
     try:
         # 执行sql语句
         cursor.execute(sql, (kwargs.get("msg_id"),
@@ -20,10 +21,13 @@ def insertDB(kwargs):
                              kwargs.get("tools"),
                              kwargs.get("transmi_count"),
                              kwargs.get("comment_count"),
-                             kwargs.get("praise_count")))
+                             kwargs.get("praise_count"),
+                             kwargs.get("lng"),
+                             kwargs.get("lat"),
+                             ))
         # 提交到数据库执行
         db.commit()
-        print("seccess")
+        print("success insert")
     except Exception as e:
         # 如果发生错误则回滚
         print(e)

@@ -18,8 +18,8 @@
 |transmi_count|int|10|允许|转发数|
 |comment_count|int|10|允许|评论数|
 |praise_count|int|10|允许|点赞数|
-|lng|float|0|允许|文章的创建时间|
-|lat|float|0|允许|文章的更新时间|
+|lng|float|0|允许|经度|
+|lat|float|0|允许|纬度|
 |created_at|timestamp|0|允许|数据创建时间|
 |updated_at|timestamp|0|允许|数据更新时间|
     

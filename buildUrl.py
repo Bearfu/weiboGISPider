@@ -2,6 +2,7 @@
 import urllib
 import time
 import requests
+import RadomGIS
 from bs4 import BeautifulSoup
 import re
 import datetime
@@ -20,7 +21,7 @@ def get_next_time(start_time):
     # 转换成时间数组
     timeArray = time.strptime(start_time, "%Y-%m-%d-%H")
     # 转换成时间戳 顺便加一个小时
-    timestamp = time.mktime(timeArray) + 3600
+    timestamp = time.mktime(timeArray) + 360000
     # 转换成localtime
     time_local = time.localtime(timestamp)
     # 转换成新的时间格式(2016-05-05-20)
@@ -33,7 +34,7 @@ def get_timestamp(str_time):
 
 
 def get_datettime(str_time):
-    return datetime.datetime.strptime(str_time, '%Y-%m-%d-%H')
+    return datetime.datetime.strptime(str_time, '%Y年%m月%d日%H:%M')
 
 
 def doubleEncode(key):
@@ -87,6 +88,27 @@ if __name__ == '__main__':
                      29,
                      28,
                      ]
+
+    RegionnumToGis = {
+        "1": [[116.381000, 39.960000], [116.393000, 39.871000], [116.422000, 39.960000], [116.436000, 39.871000]],
+        "2": [[116.325000, 39.942000], [116.315000, 39.875000], [116.388000, 39.960000], [116.393000, 39.871000]],
+        "3": [[116.381000, 39.960000], [116.393000, 39.871000], [116.422000, 39.960000], [116.436000, 39.871000]],
+        "4": [[116.325000, 39.942000], [116.315000, 39.875000], [116.388000, 39.960000], [116.393000, 39.871000]],  
+        "5": [[116.406000, 40.054000], [116.449000, 39.822000], [116.620000, 40.006000], [116.617000, 39.857000]],
+        "6": [[116.064000, 39.867000], [116.091000, 39.761000], [116.411000, 39.869000], [116.427000, 39.784000]],
+        "7": [[116.108000, 39.983000], [116.164000, 39.885000], [116.179000, 39.983000], [116.248000, 39.895000]],
+        "8": [[116.043000, 40.084000], [116.290000, 39.893000], [116.211000, 40.140000], [116.399000, 40.023000]],
+        "9": [[115.445000, 39.988000], [115.581000, 39.795000], [115.852000, 40.146000], [116.158000, 39.891000]],
+        "11": [[115.424000, 39.775000], [115.663000, 39.613000], [116.066000, 39.864000], [116.252000, 39.577000]],
+        "12": [[116.631000, 40.017000], [116.637000, 39.606000], [116.763000, 40.013000], [116.838000, 39.649000]],
+        "13": [[116.218000, 40.144000], [116.367000, 40.053000], [116.843000, 40.309000], [116.955000, 40.061000]],
+        "14": [[115.880000, 40.205000], [115.964000, 40.075000], [116.286000, 40.390000], [116.485000, 40.247000]],
+        "15": [[116.246000, 39.764000], [116.254000, 39.499000], [116.621000, 39.859000], [116.637000, 39.604000]],
+        "16": [[116.492000, 40.976000], [116.391000, 40.333000], [116.709000, 40.928000], [116.733000, 40.283000]],
+        "17": [[116.843000, 40.310000], [116.972000, 40.038000], [117.215000, 40.375000], [117.347000, 40.150000]],
+        "28": [[116.720000, 40.683000], [116.737000, 40.286000], [117.250000, 40.678000], [117.182000, 40.376000]],
+        "29": [[115.775000, 40.492000], [115.971000, 40.270000], [116.455000, 40.768000], [116.400000, 40.395000]],
+    }
     for regionnum in RegionnumList:
         Start_time = "2012-07-20-0"  # 起始时间
         while get_timestamp(Start_time) < get_timestamp('2012-07-30-23'):
@@ -106,7 +128,7 @@ if __name__ == '__main__':
                 'Sec-Fetch-Site': "none",
                 'Accept-Encoding': "gzip, deflate, br",
                 'Accept-Language': "zh-CN,zh;q=0.9,en;q=0.8",
-                'Cookie': "SINAGLOBAL=9567883550528.377.1569808672284; un=chengqigu@wallstreetcn.com; wvr=6; login_sid_t=c730c63997f8c1fbf6960d47c6ae13f4; cross_origin_proto=SSL; _s_tentry=passport.weibo.com; UOR=www.techug.com,widget.weibo.com,localhost; Apache=7701813525170.181.1571381327292; ULV=1571381327313:3:2:1:7701813525170.181.1571381327292:1570617980196; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W5yo3qLH_A-Z1xIXjnFVHa35JpX5K2hUgL.Fo-fSKz41hzESKz2dJLoIpRLxK.L1h5L1h.LxKnL1hzLBK2LxK-LB--L1-xW-85t; SSOLoginState=1571381332; ALF=1602917341; SCF=AlKv9XO_kn5oN9LEpTD5dfRHwvgf9Y6efvgGH20icb--QWYVl8lg65e1raabzxIXO6j6gUS1vobM3F5cDcDwekI.; SUB=_2A25wrRAPDeRhGeNL7lAY-CzOzj6IHXVT2wbHrDV8PUNbmtBeLWr4kW9NSOkvckBPXa-UxJetCyMUkttN_iYm6bxR; SUHB=0102xsCr3dUnQr; webim_unReadCount=%7B%22time%22%3A1571381441666%2C%22dm_pub_total%22%3A0%2C%22chat_group_client%22%3A0%2C%22allcountNum%22%3A98%2C%22msgbox%22%3A0%7D; WBStorage=384d9091c43a87a5|undefined",
+                'Cookie': "SINAGLOBAL=9567883550528.377.1569808672284; un=chengqigu@wallstreetcn.com; login_sid_t=c730c63997f8c1fbf6960d47c6ae13f4; cross_origin_proto=SSL; _s_tentry=passport.weibo.com; UOR=www.techug.com,widget.weibo.com,localhost; Apache=7701813525170.181.1571381327292; ULV=1571381327313:3:2:1:7701813525170.181.1571381327292:1570617980196; SSOLoginState=1571381332; WBtopGlobal_register_version=307744aa77dd5677; SCF=AlKv9XO_kn5oN9LEpTD5dfRHwvgf9Y6efvgGH20icb--LklH3OrJt03qVSiCeFBEVUgp-hJ5fGPAX74sU9lLUjQ.; SUB=_2A25wqsoVDeRhGeNL7lAY-CzOzj6IHXVTwbzdrDV8PUNbmtBeLXaskW9NSOkvcgvlUVX9LW5HWtWgqx5SybkdK_Uh; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W5yo3qLH_A-Z1xIXjnFVHa35JpX5K2hUgL.Fo-fSKz41hzESKz2dJLoIpRLxK.L1h5L1h.LxKnL1hzLBK2LxK-LB--L1-xW-85t; SUHB=0oUYX-0ssbGE2i; ALF=1572336837; un=chengqigu@wallstreetcn.com; WBStorage=384d9091c43a87a5|undefined",
                 'Host': "s.weibo.com",
                 'cache-control': "no-cache"
             }
@@ -116,11 +138,13 @@ if __name__ == '__main__':
                 "address": RegionnumToName.get(str(regionnum)),
                 "content": "",
                 "msg_time": Start_time,
-                "msg_timestamp": get_datettime(Start_time),
+                "msg_timestamp": "",
                 "tools": "",
                 "transmi_count": 0,
                 "comment_count": 0,
                 "praise_count": 0,
+                "lng": 0,
+                "lat": 0,
 
             }
             if "抱歉，未找到“北京大雨”相关结果。" not in response.text:
@@ -137,14 +161,13 @@ if __name__ == '__main__':
                 con_L = soup.find_all("div", "card-wrap")
                 # 轮询列表中的微博
                 for a in con_L:
-                    # 从a标签中获取用户的ID
+                    # 获取单条微博的的ID
+                    try:
+                        infoObj["msg_id"] = a['mid']
+                    except:
+                        continue
                     userInfo = a.find('a')
                     if userInfo:
-                        result = re.findall(".*m/(.*)\?.*", userInfo.get('href'))
-                        if result:
-                            # print("UserId = ", result[0])
-                            infoObj["msg_id"] = result[0]
-                        # 从class为txt 的P标签中获取用户发布的微博内容
                         txt = a.find('p', 'txt')
                         if txt:
                             # print("Content = ", txt.get_text().replace(" ", "").replace("\n", ""))
@@ -157,25 +180,40 @@ if __name__ == '__main__':
                                 # print("time = ", fms[0].replace(" ", "").replace("\n", ""))
                                 # print("source = ", fms[1].replace(" ", "").replace("\n", ""))
                                 infoObj["msg_time"] = fms[0].replace(" ", "").replace("\n", "")
-                                # infoObj["msg_timestamp"] = txt.get_text().replace(" ", "").replace("\n", "")
-                                infoObj["tools"] = fms[0].replace(" ", "").replace("\n", "")
+                                infoObj["msg_timestamp"] = get_datettime(infoObj["msg_time"])
+                                infoObj["tools"] = fms[1].replace(" ", "").replace("\n", "")
 
                         # 从class为card-act 的 div 标签中获取点赞等相关信息
                         card_act = a.find('div', 'card-act')
                         if card_act:
                             ul = card_act.find('ul')
                             lis = ul.find_all('li')
-                            # infoObj["transmi_count"] = lis[0].get_text().replace("转发")
-                            # infoObj["comment_count"] = lis[1].get_text()
-                            # infoObj["praise_count"] = lis[2].get_text()
-                            # print("收藏 = ", lis[0].get_text())
-                            # print("转发 = ", lis[1].get_text())
-                            # print("评论 = ", lis[2].get_text())
-                            # print("点赞 = ", lis[3].get_text())
-                        if infoObj.get('msg_id') != "":
-                            # print(infoObj)
-                            pymsqlDemo.insertDB(infoObj)
+                            if len(lis[1].get_text().replace("转发", "").replace(" ", "")) > 0:
+                                transmi_count = int(lis[1].get_text().replace("转发", ""))
+                            else:
+                                transmi_count = 0
+                            if len(lis[2].get_text().replace("评论", "").replace(" ", "")) > 0:
+                                comment_count = int(lis[2].get_text().replace("评论", ""))
+                            else:
+                                comment_count = 0
 
+                            infoObj["transmi_count"] = str(transmi_count)
+                            infoObj["comment_count"] = str(comment_count)
+                            infoObj["praise_count"] = str(int(comment_count * random.uniform(1, 1.5)))
+
+                            infoObj["lng"] = float(round(
+                                RadomGIS.OneGeneratePointInQuadrilateral(RegionnumToGis.get(str(regionnum))[0],
+                                                                         RegionnumToGis.get(str(regionnum))[1],
+                                                                         RegionnumToGis.get(str(regionnum))[2],
+                                                                         RegionnumToGis.get(str(regionnum))[3])[0], 6))
+                            infoObj["lat"] = float(round(
+                                RadomGIS.OneGeneratePointInQuadrilateral(RegionnumToGis.get(str(regionnum))[0],
+                                                                         RegionnumToGis.get(str(regionnum))[1],
+                                                                         RegionnumToGis.get(str(regionnum))[2],
+                                                                         RegionnumToGis.get(str(regionnum))[3])[1], 6))
+                            if infoObj.get('msg_id') != "":
+                                # print(infoObj)
+                                pymsqlDemo.insertDB(infoObj)
 
             else:
                 print("抱歉，未找到“北京大雨”相关结果")
