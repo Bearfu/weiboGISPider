@@ -8,7 +8,7 @@ def insertDB(kwargs):
     # 使用cursor()方法获取操作游标
     cursor = db.cursor()
     # SQL 插入语句
-    sql = """INSERT INTO weiboGis(msg_id,address,content,msg_time,msg_timestamp,tools,transmi_count,comment_count,
+    sql = """INSERT INTO weibogis(msg_id,address,content,msg_time,msg_timestamp,tools,transmi_count,comment_count,
                     praise_count,lng,lat,created_at,updated_at)
              VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW(),NOW())"""
     try:

@@ -28,7 +28,7 @@
 ### 建表语句
 
 ````
-    DROP TABLE IF EXISTS `weiboGis`;
+    DROP TABLE IF EXISTS `weibogis`;
     CREATE TABLE `weiboGis` (
       `id` bigint(20) NOT NULL AUTO_INCREMENT,
       `msg_id` bigint(20) DEFAULT NULL,
@@ -40,8 +40,10 @@
       `transmi_count` int(10) DEFAULT NULL,
       `comment_count` int(10) DEFAULT NULL,
       `praise_count` int(10) DEFAULT NULL,
-      `lng` float DEFAULT NULL,
-      `lat` float DEFAULT NULL,
+      `lng` float(64) DEFAULT NULL,
+      `lat` float(64) DEFAULT NULL,
+      `real_lng` float(64) DEFAULT NULL,
+      `real_lat` float(64) DEFAULT NULL,
       `created_at` datetime DEFAULT NULL,
       `updated_at` datetime DEFAULT NULL,
       PRIMARY KEY (`id`) USING BTREE

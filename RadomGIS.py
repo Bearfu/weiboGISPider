@@ -178,11 +178,11 @@ def OneGeneratePointInQuadrilateral(pointA, pointB, pointC, pointD):
         pointP = np.array([random.uniform(xMin, xMax), random.uniform(yMin, yMax)])
         vertices = [pointA, pointB, pointC, pointD]
         # return pointP
-        # 这个地方的逻辑我一直没想明白 为什么四个点的顺序会需要考虑进去
         bbPath = mplPath.Path(np.array([pointA,
                                         pointC,
                                         pointD,
                                         pointB]))
+
         if bbPath.contains_point(pointP):
             return pointP
 

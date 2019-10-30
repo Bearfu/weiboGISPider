@@ -21,7 +21,7 @@ def get_next_time(start_time):
     # 转换成时间数组
     timeArray = time.strptime(start_time, "%Y-%m-%d-%H")
     # 转换成时间戳 顺便加一个小时
-    timestamp = time.mktime(timeArray) + 360000
+    timestamp = time.mktime(timeArray) + 3600000
     # 转换成localtime
     time_local = time.localtime(timestamp)
     # 转换成新的时间格式(2016-05-05-20)
@@ -42,7 +42,6 @@ def doubleEncode(key):
         return urllib.parse.quote(urllib.parse.quote(key))
     except Exception:
         return "error"
-
 
 if __name__ == '__main__':
     # 关键词 北京大雨
@@ -88,7 +87,6 @@ if __name__ == '__main__':
                      29,
                      28,
                      ]
-
     RegionnumToGis = {
         "1": [[116.381000, 39.960000], [116.393000, 39.871000], [116.422000, 39.960000], [116.436000, 39.871000]],
         "2": [[116.325000, 39.942000], [116.315000, 39.875000], [116.388000, 39.960000], [116.393000, 39.871000]],
@@ -110,10 +108,10 @@ if __name__ == '__main__':
         "29": [[115.775000, 40.492000], [115.971000, 40.270000], [116.455000, 40.768000], [116.400000, 40.395000]],
     }
     for regionnum in RegionnumList:
-        Start_time = "2012-07-20-0"  # 起始时间
-        while get_timestamp(Start_time) < get_timestamp('2012-07-30-23'):
+        Start_time = "2012-07-01-0"  # 起始时间
+        while get_timestamp(Start_time) < get_timestamp('2012-07-31-23'):
             End_time = get_next_time(Start_time)
-            url = "https://s.weibo.com/weibo/%25E5%258C%2597%25E4%25BA%25AC%25E5%25A4%25A7%25E9%259B%25A8?q=北京大雨" \
+            url = "https://s.weibo.com/weibo/%25E5%258C%2597%25E4%25BA%25AC%25E5%25A4%25A7%25E9%259B%25A8?q=北京暴雨" \
                   "&region=custom:11:{}&typeall=1&suball=1&timescope=custom:{}:{}&Refer=g".format(
                 regionnum, Start_time, End_time)
             print(url)
@@ -128,11 +126,14 @@ if __name__ == '__main__':
                 'Sec-Fetch-Site': "none",
                 'Accept-Encoding': "gzip, deflate, br",
                 'Accept-Language': "zh-CN,zh;q=0.9,en;q=0.8",
-                'Cookie': "SINAGLOBAL=9567883550528.377.1569808672284; un=chengqigu@wallstreetcn.com; login_sid_t=c730c63997f8c1fbf6960d47c6ae13f4; cross_origin_proto=SSL; _s_tentry=passport.weibo.com; UOR=www.techug.com,widget.weibo.com,localhost; Apache=7701813525170.181.1571381327292; ULV=1571381327313:3:2:1:7701813525170.181.1571381327292:1570617980196; SSOLoginState=1571381332; WBtopGlobal_register_version=307744aa77dd5677; SCF=AlKv9XO_kn5oN9LEpTD5dfRHwvgf9Y6efvgGH20icb--LklH3OrJt03qVSiCeFBEVUgp-hJ5fGPAX74sU9lLUjQ.; SUB=_2A25wqsoVDeRhGeNL7lAY-CzOzj6IHXVTwbzdrDV8PUNbmtBeLXaskW9NSOkvcgvlUVX9LW5HWtWgqx5SybkdK_Uh; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W5yo3qLH_A-Z1xIXjnFVHa35JpX5K2hUgL.Fo-fSKz41hzESKz2dJLoIpRLxK.L1h5L1h.LxKnL1hzLBK2LxK-LB--L1-xW-85t; SUHB=0oUYX-0ssbGE2i; ALF=1572336837; un=chengqigu@wallstreetcn.com; WBStorage=384d9091c43a87a5|undefined",
+                'Cookie': "",
                 'Host': "s.weibo.com",
                 'cache-control': "no-cache"
             }
-            response = requests.request("GET", url, headers=headers)
+            try:
+                response = requests.request("GET", url, headers=headers)
+            except:
+                pass
             infoObj = {
                 "msg_id": "",
                 "address": RegionnumToName.get(str(regionnum)),
@@ -147,7 +148,7 @@ if __name__ == '__main__':
                 "lat": 0,
 
             }
-            if "抱歉，未找到“北京大雨”相关结果。" not in response.text:
+            if "抱歉，未找到“北京暴雨”相关结果。" not in response.text:
                 # html文件转为SOUP对象
                 soup = BeautifulSoup(response.text, 'lxml')
                 # 获取本次搜索结果能翻页页数
@@ -205,12 +206,13 @@ if __name__ == '__main__':
                                 RadomGIS.OneGeneratePointInQuadrilateral(RegionnumToGis.get(str(regionnum))[0],
                                                                          RegionnumToGis.get(str(regionnum))[1],
                                                                          RegionnumToGis.get(str(regionnum))[2],
-                                                                         RegionnumToGis.get(str(regionnum))[3])[0], 6))
+                                                                         RegionnumToGis.get(str(regionnum))[3])[0], 10))
                             infoObj["lat"] = float(round(
                                 RadomGIS.OneGeneratePointInQuadrilateral(RegionnumToGis.get(str(regionnum))[0],
                                                                          RegionnumToGis.get(str(regionnum))[1],
                                                                          RegionnumToGis.get(str(regionnum))[2],
-                                                                         RegionnumToGis.get(str(regionnum))[3])[1], 6))
+                                                                         RegionnumToGis.get(str(regionnum))[3])[1], 10))
+
                             if infoObj.get('msg_id') != "":
                                 # print(infoObj)
                                 pymsqlDemo.insertDB(infoObj)

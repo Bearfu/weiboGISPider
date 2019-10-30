@@ -26,8 +26,8 @@ def get_mysql_connection():
     connection = pymysql.connect(host="127.0.0.1",
                                  user='root',
                                  port=3306,
-                                 password="134679852",
-                                 db='weibo',
+                                 password="root",
+                                 db='weibospider',
                                  charset="utf8",
                                  )
 
