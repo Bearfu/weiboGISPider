@@ -9,8 +9,8 @@ def insertDB(kwargs):
     cursor = db.cursor()
     # SQL 插入语句
     sql = """INSERT INTO weibogis(msg_id,address,content,msg_time,msg_timestamp,tools,transmi_count,comment_count,
-                    praise_count,lng,lat,created_at,updated_at)
-             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW(),NOW())"""
+                    praise_count,lng,lat,sURL,created_at,updated_at)
+             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW(),NOW())"""
     try:
         # 执行sql语句
         cursor.execute(sql, (kwargs.get("msg_id"),
@@ -24,6 +24,7 @@ def insertDB(kwargs):
                              kwargs.get("praise_count"),
                              kwargs.get("lng"),
                              kwargs.get("lat"),
+                             kwargs.get("sURL")
                              ))
         # 提交到数据库执行
         db.commit()

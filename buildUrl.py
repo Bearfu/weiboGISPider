@@ -21,7 +21,7 @@ def get_next_time(start_time):
     # 转换成时间数组
     timeArray = time.strptime(start_time, "%Y-%m-%d-%H")
     # 转换成时间戳 顺便加一个小时
-    timestamp = time.mktime(timeArray) + 3600000
+    timestamp = time.mktime(timeArray) + 3600
     # 转换成localtime
     time_local = time.localtime(timestamp)
     # 转换成新的时间格式(2016-05-05-20)
@@ -42,6 +42,7 @@ def doubleEncode(key):
         return urllib.parse.quote(urllib.parse.quote(key))
     except Exception:
         return "error"
+
 
 if __name__ == '__main__':
     # 关键词 北京大雨
@@ -91,7 +92,7 @@ if __name__ == '__main__':
         "1": [[116.381000, 39.960000], [116.393000, 39.871000], [116.422000, 39.960000], [116.436000, 39.871000]],
         "2": [[116.325000, 39.942000], [116.315000, 39.875000], [116.388000, 39.960000], [116.393000, 39.871000]],
         "3": [[116.381000, 39.960000], [116.393000, 39.871000], [116.422000, 39.960000], [116.436000, 39.871000]],
-        "4": [[116.325000, 39.942000], [116.315000, 39.875000], [116.388000, 39.960000], [116.393000, 39.871000]],  
+        "4": [[116.325000, 39.942000], [116.315000, 39.875000], [116.388000, 39.960000], [116.393000, 39.871000]],
         "5": [[116.406000, 40.054000], [116.449000, 39.822000], [116.620000, 40.006000], [116.617000, 39.857000]],
         "6": [[116.064000, 39.867000], [116.091000, 39.761000], [116.411000, 39.869000], [116.427000, 39.784000]],
         "7": [[116.108000, 39.983000], [116.164000, 39.885000], [116.179000, 39.983000], [116.248000, 39.895000]],
@@ -126,7 +127,7 @@ if __name__ == '__main__':
                 'Sec-Fetch-Site': "none",
                 'Accept-Encoding': "gzip, deflate, br",
                 'Accept-Language': "zh-CN,zh;q=0.9,en;q=0.8",
-                'Cookie': "",
+                'Cookie': "SINAGLOBAL=9567883550528.377.1569808672284; un=chengqigu@wallstreetcn.com; UOR=www.techug.com,widget.weibo.com,link.zhihu.com; login_sid_t=8d38d4567ba520550ee2c4b3522624b1; cross_origin_proto=SSL; _ga=GA1.2.1846032271.1572514968; _gid=GA1.2.1623070641.1572514968; _s_tentry=-; __gads=Test; Apache=4919063187151.969.1572514972843; ULV=1572514972878:4:3:1:4919063187151.969.1572514972843:1571381327313; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W5yo3qLH_A-Z1xIXjnFVHa35JpX5K2hUgL.Fo-fSKz41hzESKz2dJLoIpRLxK.L1h5L1h.LxKnL1hzLBK2LxK-LB--L1-xW-85t; ALF=1604050975; SSOLoginState=1572514977; SCF=AlKv9XO_kn5oN9LEpTD5dfRHwvgf9Y6efvgGH20icb--GpUEpivtjBNMTUa09x9aBFJ3lzICRXyDaHAD9EgR_NQ.; SUB=_2A25wvtzxDeRhGeNL7lAY-CzOzj6IHXVTykk5rDV8PUNbmtBeLWqikW9NSOkvcjkcWl5fFzHNljsMmGlxHgO0QDK5; SUHB=0ElqGJmXeh3aG2; WBStorage=384d9091c43a87a5|undefined; webim_unReadCount=%7B%22time%22%3A1572515285195%2C%22dm_pub_total%22%3A0%2C%22chat_group_client%22%3A0%2C%22allcountNum%22%3A0%2C%22msgbox%22%3A0%7D",
                 'Host': "s.weibo.com",
                 'cache-control': "no-cache"
             }
@@ -146,7 +147,7 @@ if __name__ == '__main__':
                 "praise_count": 0,
                 "lng": 0,
                 "lat": 0,
-
+                "sURL": "",
             }
             if "抱歉，未找到“北京暴雨”相关结果。" not in response.text:
                 # html文件转为SOUP对象
@@ -171,19 +172,24 @@ if __name__ == '__main__':
                     if userInfo:
                         txt = a.find('p', 'txt')
                         if txt:
-                            # print("Content = ", txt.get_text().replace(" ", "").replace("\n", ""))
                             infoObj["content"] = txt.get_text().replace(" ", "").replace("\n", "")
+                            try:
+                                a_o = txt.find('a').find('i')
+                                if a_o.get_text() == '2':
+                                    s = txt.find('a')['href']
+                                    response = requests.request("GET", txt.find('a')['href'])
+                                    SC = response.headers['Set-Cookie']
+                                    infoObj["sURL"] = SC
+                            except:
+                                pass
                         # 从class为from 的P标签中获取用户发布的时间和来源
                         fm = a.find('p', 'from')
                         if fm:
                             fms = fm.get_text().replace(" ", "").split("\xa0")
                             if len(fms) > 1:
-                                # print("time = ", fms[0].replace(" ", "").replace("\n", ""))
-                                # print("source = ", fms[1].replace(" ", "").replace("\n", ""))
                                 infoObj["msg_time"] = fms[0].replace(" ", "").replace("\n", "")
                                 infoObj["msg_timestamp"] = get_datettime(infoObj["msg_time"])
                                 infoObj["tools"] = fms[1].replace(" ", "").replace("\n", "")
-
                         # 从class为card-act 的 div 标签中获取点赞等相关信息
                         card_act = a.find('div', 'card-act')
                         if card_act:
@@ -214,10 +220,11 @@ if __name__ == '__main__':
                                                                          RegionnumToGis.get(str(regionnum))[3])[1], 10))
 
                             if infoObj.get('msg_id') != "":
-                                # print(infoObj)
+                                print(infoObj)
                                 pymsqlDemo.insertDB(infoObj)
+                                pass
 
             else:
-                print("抱歉，未找到“北京大雨”相关结果")
-            time.sleep(random.randint(5, 10))
+                print("抱歉，未找到“北京暴雨”相关结果")
+            time.sleep(random.randint(5, 6))
             Start_time = get_next_time(Start_time)

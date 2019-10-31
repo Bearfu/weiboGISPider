@@ -44,6 +44,7 @@
       `lat` float(64) DEFAULT NULL,
       `real_lng` float(64) DEFAULT NULL,
       `real_lat` float(64) DEFAULT NULL,
+      `sURL` varchar(1024) DEFAULT NULL,
       `created_at` datetime DEFAULT NULL,
       `updated_at` datetime DEFAULT NULL,
       PRIMARY KEY (`id`) USING BTREE
